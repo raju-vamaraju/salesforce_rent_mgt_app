@@ -1,0 +1,68 @@
+Certainly! To implement your requirement for sending email alerts based on specific conditions in Salesforce using Flows, you'll need to set up a scheduled flow. This flow will check records daily and send email alerts based on the criteria you specified:
+
+1. **Income_Type__c equals 'Rent'**
+2. **Status__c equals 'Pending'**
+3. **Due_Date__c conditions**:
+   - Greater than 3 days from today
+   - Equals today
+   - Less than today (for overdue)
+
+### Step 1: Prepare Email Templates
+
+Before creating the Flow, ensure you have the necessary email templates set up in Salesforce for each scenario:
+
+1. **Navigate to Setup** in Salesforce.
+2. Search for **Email Templates** in the Quick Find box.
+3. Choose **Email Templates** under Email.
+4. Create new email templates for each of your alert scenarios (due in more than 3 days, due today, and past due).
+
+### Step 2: Create a New Scheduled Flow
+
+1. **Go to Setup** and enter **Flows** in the Quick Find box.
+2. Click **Flows** and then **New Flow**.
+3. Select **Scheduled Flow** as the flow type, which is used for executing the flow at specified times.
+
+### Step 3: Configure the Flow Trigger
+
+1. Set the flow to start running on a schedule that makes sense for your requirements (e.g., every day at 1 AM).
+2. Define the frequency and specify the start date and time.
+
+### Step 4: Add Flow Elements for Record Query
+
+1. Drag a **Get Records** element onto the canvas.
+2. Configure it to query `Income__c` records where:
+   - **Income_Type__c** equals 'Rent'
+   - **Status__c** equals 'Pending'
+   - You'll add date criteria in decision elements later.
+
+### Step 5: Add Decision Elements
+
+1. **Add a Decision element** after your Get Records element to branch based on the `Due_Date__c`.
+2. Configure outcomes for:
+   - **Due in More Than 3 Days**: `Due_Date__c` is greater than `Formula for Today + 3 days`.
+   - **Due Today**: `Due_Date__c` equals `Formula for Today`.
+   - **Past Due**: `Due_Date__c` is less than `Formula for Today`.
+
+### Step 6: Set Up Email Alerts
+
+1. For each path in the Decision element, add an **Action element** to send an email.
+2. Select the appropriate email template for each scenario.
+3. Specify the recipient as the record owner or any other relevant party.
+
+### Step 7: Save and Activate the Flow
+
+1. Give your flow a name and a description.
+2. Save the flow and then click **Activate** to make it live.
+
+### Step 8: Testing and Monitoring
+
+1. Test the flow by setting up test records that meet each condition.
+2. Monitor the scheduled runs in the **Scheduled Jobs** section under Setup to ensure the flow executes as expected.
+3. Check the email outputs to confirm that the correct templates are being sent under the right conditions.
+
+### Notes:
+
+- **Variables and Formulas**: You may need to use variables and formulas to calculate dates. Salesforce Flow allows you to create formula variables to dynamically calculate dates based on `Today()`.
+- **Debugging**: Salesforce provides debugging tools within the Flow Builder to test your logic with example records before activation.
+
+By following these steps, you can set up a comprehensive scheduled flow in Salesforce that monitors Income records and sends automated email alerts based on your specified criteria, ensuring timely notifications related to rent statuses.
